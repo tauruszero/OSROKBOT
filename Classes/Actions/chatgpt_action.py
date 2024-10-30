@@ -17,6 +17,7 @@ class ChatGPTAction(Action):
         
         load_dotenv()
         openai.api_key = os.getenv('OPENAI_KEY')
+        openai.api_base="https://aihubmix.com/v1"
         self.message = ""
         self.midterm = midterm
         self.delay = delay
@@ -66,17 +67,17 @@ class ChatGPTAction(Action):
             functions=self.functions,
             function_call={"name": "return_option_based_on_prompt"}
         )
-
+    
         print(chat.choices[0].message.function_call.arguments)
         
         function_arguments = json.loads(chat.choices[0].message.function_call.arguments)
         function_response = function_arguments["answer"]
-
+    
         print("\n\n I think it's " , colored(function_response,"red"))
-
+    
         self.messages.clear()
         self.messages = [{"role": "system", "content": "You are a quizz assistant in the game Rise of Kingdoms."}]
-
+    
         # Switch case for reply A, B, C, D, or E
         if not self.midterm:
             if function_response == "A":
@@ -104,7 +105,7 @@ class ChatGPTAction(Action):
             elif function_response == "D":
                 ManualMoveAction(60,63).execute()
                 print("------D---")
-                    
+
 
         
         return True
